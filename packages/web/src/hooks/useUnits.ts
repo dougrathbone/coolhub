@@ -21,7 +21,14 @@ export function useUnits() {
   }, []);
 
   const handleStatusUpdate = useCallback((updatedUnits: UnitStatus[]) => {
-    setUnits(updatedUnits);
+    setUnits((prev) => {
+      const prevMap = new Map(prev.map((u) => [u.uid, u]));
+      return updatedUnits.map((incoming) => {
+        const existing = prevMap.get(incoming.uid);
+        if (!existing) return { ...incoming, visible: incoming.visible ?? true };
+        return { ...existing, ...incoming, visible: incoming.visible ?? existing.visible };
+      });
+    });
   }, []);
 
   const { connected } = useWebSocket(handleStatusUpdate);
