@@ -91,8 +91,13 @@ export function UnitCard({ unit }: { unit: UnitStatus }) {
               {unit.uid}
               {unit.isOn && (
                 <span className={cn("ml-2", modeColor(unit.mode))}>
-                  {unit.mode.charAt(0).toUpperCase() + unit.mode.slice(1)}
+                  {unit.demand
+                    ? `${unit.mode === "heat" ? "Heating" : unit.mode === "cool" ? "Cooling" : unit.mode === "dry" ? "Drying" : unit.mode === "fan" ? "Fan" : "Running"}...`
+                    : unit.mode.charAt(0).toUpperCase() + unit.mode.slice(1)}
                 </span>
+              )}
+              {unit.isOn && !unit.demand && (
+                <span className="ml-1 text-muted-foreground">Idle</span>
               )}
             </p>
           </div>
@@ -188,7 +193,9 @@ export function UnitCard({ unit }: { unit: UnitStatus }) {
               Mode
             </label>
             <div className="grid grid-cols-5 gap-1.5">
-              {MODES.map((m) => {
+              {MODES.filter(
+                (m) => !unit.supportedModes || unit.supportedModes.includes(m.value),
+              ).map((m) => {
                 const Icon = modeIcons[m.value] ?? Gauge;
                 return (
                   <button
@@ -220,7 +227,9 @@ export function UnitCard({ unit }: { unit: UnitStatus }) {
               Fan Speed
             </label>
             <div className="flex gap-1.5">
-              {FAN_SPEEDS.map((f) => (
+              {FAN_SPEEDS.filter(
+                (f) => !unit.supportedFanSpeeds || unit.supportedFanSpeeds.includes(f.value),
+              ).map((f) => (
                 <button
                   key={f.value}
                   onClick={() =>

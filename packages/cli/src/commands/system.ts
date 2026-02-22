@@ -38,6 +38,61 @@ export function registerSystemCommand(program: Command) {
     });
 
   program
+    .command("lines")
+    .description("Show HVAC line diagnostics")
+    .action(async () => {
+      const client = getClient(program);
+
+      try {
+        const lines = await client.lineDiagnostics();
+
+        if (lines.length === 0) {
+          console.log(chalk.yellow("No HVAC lines detected"));
+          return;
+        }
+
+        const table = new Table({
+          head: [
+            chalk.bold("Line"),
+            chalk.bold("Protocol"),
+            chalk.bold("Role"),
+            chalk.bold("Units"),
+            chalk.bold("TX"),
+            chalk.bold("RX"),
+            chalk.bold("TO"),
+            chalk.bold("CS"),
+            chalk.bold("Col"),
+            chalk.bold("NAK"),
+          ],
+        });
+
+        for (const line of lines) {
+          table.push([
+            line.line,
+            line.protocol,
+            line.role,
+            line.unitCounts,
+            line.tx,
+            line.rx,
+            line.timeouts === "0/0" ? chalk.green(line.timeouts) : chalk.yellow(line.timeouts),
+            line.checksumErrors === "0/0" ? chalk.green(line.checksumErrors) : chalk.red(line.checksumErrors),
+            line.collisions === "0/0" ? chalk.green(line.collisions) : chalk.yellow(line.collisions),
+            line.naks === "0/0" ? chalk.green(line.naks) : chalk.red(line.naks),
+          ]);
+        }
+
+        console.log(chalk.bold.cyan("HVAC Line Diagnostics"));
+        console.log(table.toString());
+      } catch (err) {
+        console.error(
+          chalk.red("Error:"),
+          err instanceof Error ? err.message : err,
+        );
+        process.exit(1);
+      }
+    });
+
+  program
     .command("ping")
     .description("Test connectivity to CoolMasterNet")
     .action(async () => {

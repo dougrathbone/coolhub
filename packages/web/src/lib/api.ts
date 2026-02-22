@@ -141,3 +141,33 @@ export const fetchSystemInfo = () =>
   request<Record<string, string>>("/system/info");
 export const pingSystem = () =>
   request<{ connected: boolean }>("/system/ping");
+export const fetchLineDiagnostics = () =>
+  request<
+    {
+      line: string;
+      protocol: string;
+      role: string;
+      unitCounts: string;
+      myId: string;
+      tx: string;
+      rx: string;
+      timeouts: string;
+      checksumErrors: string;
+      collisions: string;
+      naks: string;
+    }[]
+  >("/system/lines");
+
+// Bulk power
+export const setAllPower = (power: boolean) =>
+  request("/units/power", {
+    method: "POST",
+    body: JSON.stringify({ power }),
+  });
+
+// Feed (ambient temperature hint)
+export const feedUnit = (uid: string, temperature: number) =>
+  request("/units/" + uid + "/feed", {
+    method: "POST",
+    body: JSON.stringify({ temperature }),
+  });

@@ -1,10 +1,24 @@
+import { useState } from "react";
 import { useUnits } from "../../hooks/useUnits";
 import { UnitCard } from "../unit-card/UnitCard";
-import { Snowflake, Wifi, WifiOff, AlertTriangle } from "lucide-react";
+import { setAllPower } from "../../lib/api";
+import { Snowflake, Wifi, WifiOff, AlertTriangle, Power, PowerOff } from "lucide-react";
 import { cn } from "../../lib/utils";
 
 export function Dashboard() {
   const { units, loading, error, connected } = useUnits();
+  const [bulkBusy, setBulkBusy] = useState(false);
+
+  const handleBulkPower = async (power: boolean) => {
+    setBulkBusy(true);
+    try {
+      await setAllPower(power);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setBulkBusy(false);
+    }
+  };
 
   const onCount = units.filter((u) => u.isOn).length;
   const errorCount = units.filter((u) => u.errorCode).length;
@@ -45,6 +59,34 @@ export function Dashboard() {
           </p>
         </div>
         <div className="flex items-center gap-2">
+          {units.length > 0 && (
+            <>
+              <button
+                onClick={() => handleBulkPower(true)}
+                disabled={bulkBusy}
+                className={cn(
+                  "flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full transition-colors",
+                  "bg-success/10 text-success hover:bg-success/20",
+                  bulkBusy && "opacity-50 pointer-events-none",
+                )}
+              >
+                <Power className="w-3.5 h-3.5" />
+                All On
+              </button>
+              <button
+                onClick={() => handleBulkPower(false)}
+                disabled={bulkBusy}
+                className={cn(
+                  "flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full transition-colors",
+                  "bg-slate-700 text-muted hover:bg-slate-600",
+                  bulkBusy && "opacity-50 pointer-events-none",
+                )}
+              >
+                <PowerOff className="w-3.5 h-3.5" />
+                All Off
+              </button>
+            </>
+          )}
           {(errorCount > 0 || filterCount > 0) && (
             <span className="flex items-center gap-1.5 px-3 py-1.5 bg-warning/10 text-warning text-xs font-medium rounded-full">
               <AlertTriangle className="w-3.5 h-3.5" />

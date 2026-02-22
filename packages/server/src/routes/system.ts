@@ -6,11 +6,19 @@ export function registerSystemRoutes(
   client: CoolMasterClient,
 ) {
   fastify.get("/api/system/info", async () => {
-    return client.info();
+    const [info, network] = await Promise.all([
+      client.info(),
+      client.ifconfig().catch(() => ({})),
+    ]);
+    return { ...info, ...network };
   });
 
   fastify.get("/api/system/ping", async () => {
     const ok = await client.ping();
     return { connected: ok };
+  });
+
+  fastify.get("/api/system/lines", async () => {
+    return client.lineDiagnostics();
   });
 }

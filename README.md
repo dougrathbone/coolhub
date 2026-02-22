@@ -9,12 +9,18 @@ A modern web dashboard and CLI for controlling [CoolMasterNet](https://coolautom
 ## Features
 
 - **Real-time dashboard** -- see all your HVAC units at a glance with live temperature, mode, and status updates via WebSocket
+- **Demand indicator** -- see whether each unit is actively heating/cooling or idle (compressor demand flag)
 - **Full unit control** -- power on/off, mode (cool/heat/dry/fan/auto), target temperature, fan speed, and swing
+- **Bulk power controls** -- "All On" / "All Off" buttons on the dashboard to control every unit at once
 - **Room grouping** -- organize units into rooms or zones with bulk power controls
 - **Scheduling** -- create cron-based automations (e.g. "Weekdays 6am: heat bedroom to 22C")
 - **Temperature history** -- track and chart temperature trends over time
 - **Filter & error alerts** -- see which units need filter cleaning or have error codes
 - **Custom naming** -- give friendly names to your units (e.g. L1.100 = "Lounge room")
+- **Props auto-discovery** -- reads unit capabilities from the gateway on startup, syncing names/temp limits and showing only supported modes and fan speeds per unit
+- **HVAC line diagnostics** -- view per-line bus health (protocol, TX/RX counts, timeouts, checksum errors, collisions, NAKs) on the Settings page
+- **Network info** -- bridge IP, MAC, subnet, and gateway displayed in Settings
+- **Ambient temperature feed** -- send ambient temperature hints to units via API or CLI
 - **CLI tool** -- control units from the terminal
 - **Mobile friendly** -- fully responsive with bottom tab navigation, designed for use on phones
 
@@ -28,7 +34,7 @@ CoolHub is built mobile-first. The interface adapts to smaller screens with a bo
 
 ### Settings
 
-View CoolMasterNet bridge info, connection status, and configure custom unit names.
+View CoolMasterNet bridge info, network configuration, HVAC line diagnostics, connection status, and configure custom unit names.
 
 <p>
   <img src="docs/settings.png" alt="Settings" width="700" />
@@ -104,8 +110,18 @@ pnpm cli status L1.100
 pnpm cli on L1.100
 pnpm cli off L1.100
 
+# Turn all units on or off
+pnpm cli allon
+pnpm cli alloff
+
 # Set temperature, mode, and/or fan speed in one command
 pnpm cli set L1.100 --temp 22 --mode cool --fan med
+
+# Send ambient temperature hint to a unit
+pnpm cli feed L1.100 --temp 25
+
+# Show HVAC line diagnostics (protocol, TX/RX, errors)
+pnpm cli lines
 
 # Show CoolMasterNet bridge system info
 pnpm cli info

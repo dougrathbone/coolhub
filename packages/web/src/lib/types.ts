@@ -20,11 +20,14 @@ export interface UnitStatus {
   errorCode: string | null;
   cleanFilter: boolean;
   swing: SwingMode | null;
+  demand: boolean;
   customName: string | null;
   groupId: number | null;
   visible: boolean;
   tempMin: number | null;
   tempMax: number | null;
+  supportedModes: string[] | null;
+  supportedFanSpeeds: string[] | null;
 }
 
 export interface Group {

@@ -87,7 +87,8 @@ export class Poller {
         old.fanSpeed !== unit.fanSpeed ||
         old.mode !== unit.mode ||
         old.errorCode !== unit.errorCode ||
-        old.cleanFilter !== unit.cleanFilter
+        old.cleanFilter !== unit.cleanFilter ||
+        old.demand !== unit.demand
       ) {
         return true;
       }

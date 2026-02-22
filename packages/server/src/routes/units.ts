@@ -1,6 +1,7 @@
 import type { FastifyInstance } from "fastify";
 import { CoolMasterClient, type Mode, type FanSpeed, type SwingMode } from "@coolhub/client";
 import type { Poller } from "../services/poller.js";
+import type { PropsSync } from "../services/props-sync.js";
 import { getDb } from "../db/index.js";
 import { unitConfig } from "../db/schema.js";
 import { eq } from "drizzle-orm";
@@ -20,6 +21,7 @@ export function registerUnitRoutes(
   client: CoolMasterClient,
   poller: Poller,
   config: AppConfig,
+  propsSync?: PropsSync,
 ) {
   // Get all units with their current status + config
   fastify.get("/api/units", async () => {
@@ -31,6 +33,7 @@ export function registerUnitRoutes(
     const units = [];
     for (const [uid, unit] of status) {
       const cfg = configMap.get(uid);
+      const props = propsSync?.getProps(uid);
       units.push({
         ...unit,
         customName: cfg?.customName ?? null,
@@ -38,10 +41,36 @@ export function registerUnitRoutes(
         visible: cfg?.visible ?? true,
         tempMin: cfg?.tempMin ?? null,
         tempMax: cfg?.tempMax ?? null,
+        supportedModes: props?.modes ?? null,
+        supportedFanSpeeds: props?.fanSpeeds ?? null,
       });
     }
 
     return units;
+  });
+
+  // Bulk power on/off
+  fastify.post<{ Body: { power: boolean } }>(
+    "/api/units/power",
+    async (request) => {
+      const { power } = request.body;
+      if (power) {
+        await client.turnAllOn();
+      } else {
+        await client.turnAllOff();
+      }
+      return { ok: true };
+    },
+  );
+
+  // Feed ambient temperature hint
+  fastify.post<{
+    Params: { uid: string };
+    Body: { temperature: number };
+  }>("/api/units/:uid/feed", async (request) => {
+    const { uid } = request.params;
+    await client.feed(uid, request.body.temperature);
+    return { ok: true };
   });
 
   // Get single unit
@@ -61,6 +90,7 @@ export function registerUnitRoutes(
         .where(eq(unitConfig.uid, uid))
         .get() as UnitConfigRow | undefined;
 
+      const props = propsSync?.getProps(uid);
       return {
         ...unit,
         customName: cfg?.customName ?? null,
@@ -68,6 +98,8 @@ export function registerUnitRoutes(
         visible: cfg?.visible ?? true,
         tempMin: cfg?.tempMin ?? null,
         tempMax: cfg?.tempMax ?? null,
+        supportedModes: props?.modes ?? null,
+        supportedFanSpeeds: props?.fanSpeeds ?? null,
       };
     },
   );

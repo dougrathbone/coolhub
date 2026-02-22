@@ -21,10 +21,39 @@ export interface UnitStatus {
   errorCode: string | null;
   cleanFilter: boolean;
   swing: SwingMode | null;
+  demand: boolean;
 }
 
 export interface SystemInfo {
   [key: string]: string;
+}
+
+export interface LineDiagnostics {
+  line: string;
+  protocol: string;
+  role: string;
+  unitCounts: string;
+  myId: string;
+  tx: string;
+  rx: string;
+  timeouts: string;
+  checksumErrors: string;
+  collisions: string;
+  naks: string;
+  raw: string;
+}
+
+export interface NetworkInfo {
+  [key: string]: string;
+}
+
+export interface UnitProps {
+  uid: string;
+  name: string | null;
+  modes: string[];
+  fanSpeeds: string[];
+  tempLimitMin: number | null;
+  tempLimitMax: number | null;
 }
 
 export interface CoolMasterConfig {

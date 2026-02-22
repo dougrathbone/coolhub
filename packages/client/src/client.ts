@@ -4,13 +4,19 @@ import {
   parseSwingResponse,
   parseSystemInfo,
   parseUnitList,
+  parseLineDiagnostics,
+  parseNetworkInfo,
+  parseUnitProps,
 } from "./parser.js";
 import type {
   CoolMasterConfig,
   FanSpeed,
+  LineDiagnostics,
   Mode,
+  NetworkInfo,
   SwingMode,
   SystemInfo,
+  UnitProps,
   UnitStatus,
 } from "./types.js";
 import { MODES, SWING_NAME_TO_CHAR } from "./types.js";
@@ -128,6 +134,34 @@ export class CoolMasterClient {
   async feed(uid: string, temp: number): Promise<void> {
     const rounded = Math.round(temp * 10) / 10;
     await this.conn.execute(`feed ${uid} ${rounded}`);
+  }
+
+  /** Turn all units on. */
+  async turnAllOn(): Promise<void> {
+    await this.conn.execute("allon");
+  }
+
+  /** Turn all units off. */
+  async turnAllOff(): Promise<void> {
+    await this.conn.execute("alloff");
+  }
+
+  /** Get HVAC line diagnostics. */
+  async lineDiagnostics(): Promise<LineDiagnostics[]> {
+    const raw = await this.conn.execute("line");
+    return parseLineDiagnostics(raw);
+  }
+
+  /** Get network configuration (IP, MAC, subnet, gateway). */
+  async ifconfig(): Promise<NetworkInfo> {
+    const raw = await this.conn.execute("ifconfig");
+    return parseNetworkInfo(raw);
+  }
+
+  /** Get unit properties from the gateway. */
+  async getProps(uid: string): Promise<UnitProps> {
+    const raw = await this.conn.execute(`props ${uid}`);
+    return parseUnitProps(uid, raw);
   }
 
   private async querySwing(uid: string): Promise<SwingMode | null> {

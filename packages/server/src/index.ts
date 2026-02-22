@@ -12,6 +12,7 @@ import { getDb } from "./db/index.js";
 import { Poller } from "./services/poller.js";
 import { Scheduler } from "./services/scheduler.js";
 import { WebSocketBroadcaster } from "./services/websocket.js";
+import { PropsSync } from "./services/props-sync.js";
 import { registerUnitRoutes } from "./routes/units.js";
 import { registerGroupRoutes } from "./routes/groups.js";
 import { registerScheduleRoutes } from "./routes/schedules.js";
@@ -72,8 +73,11 @@ export async function startServer() {
   // Scheduler
   const scheduler = new Scheduler(client, config);
 
+  // Props sync
+  const propsSync = new PropsSync(client, config);
+
   // Register routes
-  registerUnitRoutes(fastify, client, poller, config);
+  registerUnitRoutes(fastify, client, poller, config, propsSync);
   registerGroupRoutes(fastify, config);
   registerScheduleRoutes(fastify, scheduler, config);
   registerHistoryRoutes(fastify, config);
@@ -86,6 +90,7 @@ export async function startServer() {
       console.log(
         `Connected to CoolMasterNet at ${config.coolmaster.host}:${config.coolmaster.port}`,
       );
+      await propsSync.sync();
       await poller.start();
       scheduler.start();
     } else {

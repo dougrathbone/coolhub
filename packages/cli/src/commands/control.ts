@@ -38,6 +38,35 @@ export function registerControlCommand(program: Command) {
     });
 
   program
+    .command("allon")
+    .description("Turn all units on")
+    .action(async () => {
+      const client = getClient(program);
+      await client.turnAllOn();
+      console.log(chalk.green("All units turned ON"));
+    });
+
+  program
+    .command("alloff")
+    .description("Turn all units off")
+    .action(async () => {
+      const client = getClient(program);
+      await client.turnAllOff();
+      console.log(chalk.yellow("All units turned OFF"));
+    });
+
+  program
+    .command("feed")
+    .description("Send ambient temperature hint to a unit")
+    .argument("<uid>", "Unit UID (e.g. L1.101)")
+    .requiredOption("-t, --temp <temperature>", "Ambient temperature value")
+    .action(async (uid: string, opts: { temp: string }) => {
+      const client = getClient(program);
+      await client.feed(uid, parseFloat(opts.temp));
+      console.log(chalk.green(`Fed ambient temp ${opts.temp} to ${uid}`));
+    });
+
+  program
     .command("set")
     .description("Set unit parameters")
     .argument("<uid>", "Unit UID (e.g. L1.101)")

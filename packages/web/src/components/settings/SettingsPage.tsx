@@ -3,30 +3,47 @@ import type { UnitStatus } from "../../lib/types";
 import {
   fetchUnits,
   fetchSystemInfo,
+  fetchLineDiagnostics,
   pingSystem,
   updateUnitConfig,
 } from "../../lib/api";
-import { Settings, Server, Wifi, WifiOff, Save, Check } from "lucide-react";
+import { Settings, Server, Wifi, WifiOff, Save, Check, Activity } from "lucide-react";
 import { cn } from "../../lib/utils";
+
+interface LineDiag {
+  line: string;
+  protocol: string;
+  role: string;
+  unitCounts: string;
+  tx: string;
+  rx: string;
+  timeouts: string;
+  checksumErrors: string;
+  collisions: string;
+  naks: string;
+}
 
 export function SettingsPage() {
   const [units, setUnits] = useState<UnitStatus[]>([]);
   const [systemInfo, setSystemInfo] = useState<Record<string, string>>({});
   const [connected, setConnected] = useState<boolean | null>(null);
+  const [lineDiagnostics, setLineDiagnostics] = useState<LineDiag[]>([]);
   const [editingUid, setEditingUid] = useState<string | null>(null);
   const [editName, setEditName] = useState("");
   const [saved, setSaved] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     try {
-      const [u, info, ping] = await Promise.all([
+      const [u, info, ping, lines] = await Promise.all([
         fetchUnits(),
         fetchSystemInfo().catch(() => ({})),
         pingSystem().catch(() => ({ connected: false })),
+        fetchLineDiagnostics().catch(() => []),
       ]);
       setUnits(u);
       setSystemInfo(info);
       setConnected(ping.connected);
+      setLineDiagnostics(lines);
     } catch {
       setConnected(false);
     }
@@ -88,6 +105,73 @@ export function SettingsPage() {
           </div>
         )}
       </div>
+
+      {/* HVAC Lines */}
+      {lineDiagnostics.length > 0 && (
+        <div className="rounded-xl bg-card border border-border p-5 mb-6">
+          <div className="flex items-center gap-3 mb-4">
+            <Activity className="w-5 h-5 text-primary" />
+            <h2 className="font-semibold text-foreground">HVAC Lines</h2>
+          </div>
+          <div className="space-y-3">
+            {lineDiagnostics.map((ld) => (
+              <div
+                key={ld.line}
+                className="rounded-lg bg-background border border-border p-4"
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <span className="font-semibold text-foreground">{ld.line}</span>
+                  <span className="text-xs font-mono px-2 py-0.5 bg-primary/10 text-primary rounded">
+                    {ld.protocol} &middot; {ld.role}
+                  </span>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-muted">Units</span>
+                    <span className="font-mono text-xs text-foreground">{ld.unitCounts}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted">TX</span>
+                    <span className="font-mono text-xs text-foreground">{ld.tx}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted">RX</span>
+                    <span className="font-mono text-xs text-foreground">{ld.rx}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted">Timeouts</span>
+                    <span className={cn(
+                      "font-mono text-xs",
+                      ld.timeouts !== "0/0" ? "text-warning" : "text-foreground",
+                    )}>{ld.timeouts}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted">CS Errors</span>
+                    <span className={cn(
+                      "font-mono text-xs",
+                      ld.checksumErrors !== "0/0" ? "text-destructive" : "text-foreground",
+                    )}>{ld.checksumErrors}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted">Collisions</span>
+                    <span className={cn(
+                      "font-mono text-xs",
+                      ld.collisions !== "0/0" ? "text-warning" : "text-foreground",
+                    )}>{ld.collisions}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted">NAKs</span>
+                    <span className={cn(
+                      "font-mono text-xs",
+                      ld.naks !== "0/0" ? "text-destructive" : "text-foreground",
+                    )}>{ld.naks}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Unit Naming */}
       <div className="rounded-xl bg-card border border-border p-5">
