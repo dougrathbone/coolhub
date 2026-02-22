@@ -1,0 +1,21 @@
+{
+  "name": "coolhub",
+  "private": true,
+  "version": "1.0.0",
+  "description": "CoolHub - Modern web dashboard and CLI for CoolMasterNet HVAC controllers",
+  "scripts": {
+    "dev": "concurrently \"pnpm --filter @coolhub/server dev\" \"pnpm --filter @coolhub/web dev\"",
+    "dev:server": "pnpm --filter @coolhub/server dev",
+    "dev:web": "pnpm --filter @coolhub/web dev",
+    "build": "pnpm --filter @coolhub/client build && pnpm --filter @coolhub/web build && pnpm --filter @coolhub/server build && pnpm --filter @coolhub/cli build",
+    "start": "node packages/server/dist/index.js",
+    "cli": "node packages/cli/dist/index.js"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": ["better-sqlite3", "esbuild"]
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "typescript": "^5.7.3"
+  }
+}
