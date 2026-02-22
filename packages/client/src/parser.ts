@@ -19,7 +19,7 @@ import { SWING_CHAR_TO_NAME } from "./types.js";
 export function parseStatusLine(line: string): UnitStatus {
   const fields = line.trim().split(/\s+/);
 
-  if (fields.length < 8 || fields.length > 9) {
+  if (fields.length !== 9) {
     throw new Error(`Unexpected status line format: ${line}`);
   }
 
