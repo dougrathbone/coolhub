@@ -34,6 +34,8 @@ export function registerUnitRoutes(
     for (const [uid, unit] of status) {
       const cfg = configMap.get(uid);
       const props = propsSync?.getProps(uid);
+      const rawModes = props?.modes?.length ? props.modes : null;
+      const rawFanSpeeds = props?.fanSpeeds?.length ? props.fanSpeeds : null;
       units.push({
         ...unit,
         customName: cfg?.customName ?? null,
@@ -41,8 +43,8 @@ export function registerUnitRoutes(
         visible: cfg?.visible ?? true,
         tempMin: cfg?.tempMin ?? null,
         tempMax: cfg?.tempMax ?? null,
-        supportedModes: props?.modes?.length ? props.modes : null,
-        supportedFanSpeeds: props?.fanSpeeds?.length ? props.fanSpeeds : null,
+        supportedModes: rawModes?.includes(unit.mode) ? rawModes : null,
+        supportedFanSpeeds: rawFanSpeeds?.includes(unit.fanSpeed) ? rawFanSpeeds : null,
       });
     }
 
@@ -91,6 +93,8 @@ export function registerUnitRoutes(
         .get() as UnitConfigRow | undefined;
 
       const props = propsSync?.getProps(uid);
+      const rawModes = props?.modes?.length ? props.modes : null;
+      const rawFanSpeeds = props?.fanSpeeds?.length ? props.fanSpeeds : null;
       return {
         ...unit,
         customName: cfg?.customName ?? null,
@@ -98,8 +102,8 @@ export function registerUnitRoutes(
         visible: cfg?.visible ?? true,
         tempMin: cfg?.tempMin ?? null,
         tempMax: cfg?.tempMax ?? null,
-        supportedModes: props?.modes?.length ? props.modes : null,
-        supportedFanSpeeds: props?.fanSpeeds?.length ? props.fanSpeeds : null,
+        supportedModes: rawModes?.includes(unit.mode) ? rawModes : null,
+        supportedFanSpeeds: rawFanSpeeds?.includes(unit.fanSpeed) ? rawFanSpeeds : null,
       };
     },
   );
