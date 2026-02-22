@@ -194,7 +194,7 @@ export function UnitCard({ unit }: { unit: UnitStatus }) {
             </label>
             <div className="grid grid-cols-5 gap-1.5">
               {MODES.filter(
-                (m) => !unit.supportedModes || unit.supportedModes.includes(m.value),
+                (m) => !unit.supportedModes?.length || unit.supportedModes.includes(m.value),
               ).map((m) => {
                 const Icon = modeIcons[m.value] ?? Gauge;
                 return (
@@ -228,7 +228,7 @@ export function UnitCard({ unit }: { unit: UnitStatus }) {
             </label>
             <div className="flex gap-1.5">
               {FAN_SPEEDS.filter(
-                (f) => !unit.supportedFanSpeeds || unit.supportedFanSpeeds.includes(f.value),
+                (f) => !unit.supportedFanSpeeds?.length || unit.supportedFanSpeeds.includes(f.value),
               ).map((f) => (
                 <button
                   key={f.value}

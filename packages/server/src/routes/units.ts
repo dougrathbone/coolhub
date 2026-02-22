@@ -41,8 +41,8 @@ export function registerUnitRoutes(
         visible: cfg?.visible ?? true,
         tempMin: cfg?.tempMin ?? null,
         tempMax: cfg?.tempMax ?? null,
-        supportedModes: props?.modes ?? null,
-        supportedFanSpeeds: props?.fanSpeeds ?? null,
+        supportedModes: props?.modes?.length ? props.modes : null,
+        supportedFanSpeeds: props?.fanSpeeds?.length ? props.fanSpeeds : null,
       });
     }
 
@@ -98,8 +98,8 @@ export function registerUnitRoutes(
         visible: cfg?.visible ?? true,
         tempMin: cfg?.tempMin ?? null,
         tempMax: cfg?.tempMax ?? null,
-        supportedModes: props?.modes ?? null,
-        supportedFanSpeeds: props?.fanSpeeds ?? null,
+        supportedModes: props?.modes?.length ? props.modes : null,
+        supportedFanSpeeds: props?.fanSpeeds?.length ? props.fanSpeeds : null,
       };
     },
   );
