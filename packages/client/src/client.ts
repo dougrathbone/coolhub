@@ -19,7 +19,7 @@ import type {
   UnitProps,
   UnitStatus,
 } from "./types.js";
-import { MODES, SWING_NAME_TO_CHAR } from "./types.js";
+import { FAN_SPEED_TO_CHAR, FAN_SPEEDS, MODES, SWING_NAME_TO_CHAR } from "./types.js";
 
 export class CoolMasterClient {
   private conn: CoolMasterConnection;
@@ -110,7 +110,11 @@ export class CoolMasterClient {
   }
 
   async setFanSpeed(uid: string, speed: FanSpeed): Promise<void> {
-    await this.conn.execute(`fspeed ${uid} ${speed}`);
+    const char = FAN_SPEED_TO_CHAR[speed];
+    if (!char) {
+      throw new Error(`Invalid fan speed: ${speed}. Valid: ${FAN_SPEEDS.join(", ")}`);
+    }
+    await this.conn.execute(`fspeed ${uid} ${char}`);
   }
 
   async setSwing(uid: string, swing: SwingMode): Promise<void> {

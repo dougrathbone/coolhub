@@ -65,6 +65,14 @@ export interface CoolMasterConfig {
 
 export const MODES: Mode[] = ["auto", "cool", "dry", "fan", "heat"];
 export const FAN_SPEEDS: FanSpeed[] = ["low", "med", "high", "top", "auto"];
+
+export const FAN_SPEED_TO_CHAR: Record<FanSpeed, string> = {
+  low: "l",
+  med: "m",
+  high: "h",
+  top: "t",
+  auto: "a",
+};
 export const SWING_MODES: SwingMode[] = [
   "auto",
   "horizontal",
