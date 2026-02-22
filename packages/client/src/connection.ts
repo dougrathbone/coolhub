@@ -106,10 +106,8 @@ export class CoolMasterConnection {
       data = data.slice(0, -2);
     }
 
-    // Strip OK suffix
-    if (data.endsWith("OK\r\n")) {
-      data = data.slice(0, -4);
-    }
+    // Strip OK suffix (handles both \r\n and \n line endings)
+    data = data.replace(/\s*OK\s*$/i, "");
 
     if (data.includes("Unknown command")) {
       const cmd = data.split(" ")[0] ?? "unknown";

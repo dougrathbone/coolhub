@@ -49,7 +49,10 @@ export class CoolMasterClient {
   /** Get status for all units. */
   async status(): Promise<Map<string, UnitStatus>> {
     const raw = await this.executeStatusCmd();
-    const lines = raw.split(/\r?\n/).filter((l) => l.trim());
+    const lines = raw
+      .split(/\r?\n/)
+      .map((l) => l.trim())
+      .filter((l) => l && /^L\d+\.\d+/.test(l));
 
     const units = new Map<string, UnitStatus>();
     for (const line of lines) {

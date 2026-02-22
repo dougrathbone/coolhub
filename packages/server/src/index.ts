@@ -1,3 +1,7 @@
+import dotenv from "dotenv";
+import { existsSync } from "node:fs";
+import { resolve, dirname } from "node:path";
+import { fileURLToPath } from "node:url";
 import Fastify from "fastify";
 import fastifyWebsocket from "@fastify/websocket";
 import fastifyCors from "@fastify/cors";
@@ -13,11 +17,11 @@ import { registerGroupRoutes } from "./routes/groups.js";
 import { registerScheduleRoutes } from "./routes/schedules.js";
 import { registerHistoryRoutes } from "./routes/history.js";
 import { registerSystemRoutes } from "./routes/system.js";
-import { existsSync } from "node:fs";
-import { resolve, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
+
+// Load .env from monorepo root
+dotenv.config({ path: resolve(__dirname, "../../../.env") });
 
 export async function startServer() {
   const config = loadConfig();

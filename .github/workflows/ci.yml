@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [20, 22]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build client
+        run: pnpm --filter @coolhub/client build
+
+      - name: Typecheck server
+        run: pnpm --filter @coolhub/server exec tsc --noEmit
+
+      - name: Typecheck CLI
+        run: pnpm --filter @coolhub/cli exec tsc --noEmit
+
+      - name: Typecheck web
+        run: pnpm --filter @coolhub/web exec tsc -b --noEmit
+
+      - name: Build web
+        run: pnpm --filter @coolhub/web exec vite build
+
+      - name: Build server
+        run: pnpm --filter @coolhub/server build
+
+      - name: Build CLI
+        run: pnpm --filter @coolhub/cli build
