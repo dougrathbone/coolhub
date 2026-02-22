@@ -91,31 +91,43 @@ All configuration is via environment variables. Copy `.env.example` to `.env` an
 
 ## CLI Usage
 
+The CLI connects directly to the CoolMasterNet device (it does not require the server to be running).
+
 ```bash
-# Show status of all units
+# Show status of all units (alias: ls)
 pnpm cli status
 
-# Show a single unit
+# Show a single unit's detailed status
 pnpm cli status L1.100
 
-# Turn a unit on/off
+# Turn a unit on or off
 pnpm cli on L1.100
 pnpm cli off L1.100
 
-# Set temperature, mode, and fan speed
+# Set temperature, mode, and/or fan speed in one command
 pnpm cli set L1.100 --temp 22 --mode cool --fan med
 
-# Show CoolMasterNet bridge info
+# Show CoolMasterNet bridge system info
 pnpm cli info
 
-# Test connectivity
+# Test connectivity to the CoolMasterNet device
 pnpm cli ping
+
+# Show CLI version
+pnpm cli --version
 ```
 
-Pass `--host` and `--port` to target a specific CoolMasterNet device:
+### Global Options
+
+| Flag | Default | Description |
+|---|---|---|
+| `-H, --host <host>` | `192.168.1.100` | CoolMasterNet device IP |
+| `-p, --port <port>` | `10102` | CoolMasterNet ASCII interface port |
+
+Example targeting a specific device:
 
 ```bash
-pnpm cli --host 192.168.0.23 --port 10102 status
+pnpm cli -H 192.168.0.23 status
 ```
 
 ## Project Structure
