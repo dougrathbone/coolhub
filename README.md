@@ -2,9 +2,9 @@
 
 A modern web dashboard and CLI for controlling [CoolMasterNet](https://coolautomation.com/products/coolmasternet/) HVAC systems over your local network.
 
-![Dashboard](docs/dashboard.png)
-
-![Settings](docs/settings.png)
+<p>
+  <img src="docs/dashboard.png" alt="Dashboard" width="700" />
+</p>
 
 ## Features
 
@@ -16,7 +16,23 @@ A modern web dashboard and CLI for controlling [CoolMasterNet](https://coolautom
 - **Filter & error alerts** -- see which units need filter cleaning or have error codes
 - **Custom naming** -- give friendly names to your units (e.g. L1.100 = "Lounge room")
 - **CLI tool** -- control units from the terminal
-- **Mobile friendly** -- responsive layout with bottom tab navigation for phones
+- **Mobile friendly** -- fully responsive with bottom tab navigation, designed for use on phones
+
+### Mobile
+
+CoolHub is built mobile-first. The interface adapts to smaller screens with a bottom tab bar for navigation, full-width unit cards, and touch-friendly controls. Just open the server URL on your phone's browser -- no app install needed.
+
+<p>
+  <img src="docs/mobile.png" alt="Mobile view" width="300" />
+</p>
+
+### Settings
+
+View CoolMasterNet bridge info, connection status, and configure custom unit names.
+
+<p>
+  <img src="docs/settings.png" alt="Settings" width="700" />
+</p>
 
 ## Prerequisites
 
